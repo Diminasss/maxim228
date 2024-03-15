@@ -30,7 +30,7 @@ def user_initialisation(login: str, password: str, last_name: str, first_name: s
             print("Ошибка при инициализации:", e)
 
 
-def get_all_information_from_database_exclude_password(login: str) -> dict | None:
+def get_all_information_from_user_exclude_password(login: str) -> dict | None:
     if user_is_in_table(login):
         cursor.execute("""SELECT login, password, last_name, first_name, patronymic, date_of_birth, department, is_teacher, current_courses, completed_courses FROM users WHERE login = %s""", (login,))
         data: tuple = cursor.fetchall()[0]
