@@ -11,14 +11,15 @@ try:
     cursor = connection.cursor()
 
     cursor.execute("""CREATE TABLE IF NOT EXISTS users(
-    login serial PRIMARY KEY,
+    login varchar(100) PRIMARY KEY,
+    password varchar(20) NOT NULL,
     first_name varchar(100) NOT NULL,
     last_name varchar(100) NOT NULL,
     patronymic varchar(100) NOT NULL,
     date_of_birth date NOT NULL,
     department varchar(100) NOT NULL,
-    current_courses VARCHAR(255) [],
-    completed_courses VARCHAR(255) [])""")
+    current_courses VARCHAR(255) ARRAY,
+    completed_courses VARCHAR(255) ARRAY)""")
 
     print("Успешное создание/подключение к таблице")
 except psycopg2.OperationalError as e:
@@ -26,12 +27,39 @@ except psycopg2.OperationalError as e:
 
 
 # Метод по инициализации пользователя
-def initialisation(login: str, first_name: str, last_name: str, patronymic: str, date_of_birth: str, department: str, current_courses: list, completed_courses: list) -> None:
+def initialisation(login: str, password: str, first_name: str, last_name: str, patronymic: str, date_of_birth: str, department: str, current_courses: list, completed_courses: list) -> None:
     try:
-        cursor.execute("""INSERT INTO users (login, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", (login, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses))
-
+        cursor.execute("""INSERT INTO users (login, password, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", (login, password, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses))
+        print("Успешная ")
     except psycopg2.IntegrityError as e:
-        print("Ошибка при подключении к базе данных:", e)
+        print("Ошибка при инициализации:", e)
+
+
+initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", [], [])
+
+
+def edit_sqlite_table(chat_id: int, what_to_edit: str, value: str | list | int) -> None:
+    """
+    Поля для редактирования на выбор\n
+    login\n
+    password\n
+    first_name\n
+    last_name\n
+    patronymic\n
+    date_of_birth\n
+    department\n
+    current_courses\n
+    completed_courses
+    :param chat_id:
+    :param what_to_edit:
+    :param value:
+    :return:
+    """
+    try:
+        sql_update_query = f"""UPDATE users SET {what_to_edit} = '{value}' WHERE user_id = {chat_id}"""
+        cursor.execute(sql_update_query)
+    except psycopg2.IntegrityError as e:
+        print("Ошибка при редактировании:", e)
 
 
 # Добавляем обработчик для CORS
@@ -51,7 +79,18 @@ def main_page():
 
 @app.route('/auth', methods=['POST'])
 def auth():
-    pass
+    # Получаем данные из тела запроса в формате JSON
+    request_data = request.get_json()
+
+    # Извлекаем значение титла из полученных данных
+    title = request_data.get('title')
+    print(request_data)
+
+    # Выводим значение титла на экран
+    print("Title:", title)
+
+    # Отправляем ответ об успешном выполнении
+    return jsonify({'message': 'Засунь в попку))))'}), 200
 
 
 @app.route('/about', methods=['POST'])
