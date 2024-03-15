@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -49,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (response.statusCode == 200) {
-      log('200, ${response.body}, $pass');
       return jsonDecode(response.body)['response'];
     } else {
       throw Exception('Failed to fetch data.');
@@ -80,7 +78,6 @@ class _LoginPageState extends State<LoginPage> {
           await _isLoginSuccess(_nameController.text, _passwordController.text);
       if (isSuccess) {
         Person person = await _getPerson(_nameController.text);
-        log(person.firstName!);
         Navigator.pushNamed(
             context, '/${person.isTeacher! ? 'teacher' : 'student'}_courses',
             arguments: {'person': person});

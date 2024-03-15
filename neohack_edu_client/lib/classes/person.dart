@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 class Person {
   String? login;
   String? password;
@@ -38,12 +35,10 @@ class Person {
     completedCourses = [];
     List<dynamic> curr = List.from(json['current_courses']);
     for (var element in curr) {
-      log('$element curr');
       currentCourses!.add(int.parse(element));
     }
     List<dynamic> comp = List.from(json['completed_courses']);
     for (var element in comp) {
-      log(element);
       completedCourses!.add(int.parse(element));
     }
   }
