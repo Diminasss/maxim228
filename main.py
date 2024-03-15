@@ -26,10 +26,12 @@ except psycopg2.OperationalError as e:
 
 
 # Метод по инициализации пользователя
-def initialisation() -> None:
-    # try:
-    #     cursor.execute()
-    pass
+def initialisation(login: str, first_name: str, last_name: str, patronymic: str, date_of_birth: str, department: str, current_courses: list, completed_courses: list) -> None:
+    try:
+        cursor.execute("""INSERT INTO users (login, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", (login, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses))
+
+    except psycopg2.IntegrityError as e:
+        print("Ошибка при подключении к базе данных:", e)
 
 
 # Добавляем обработчик для CORS
