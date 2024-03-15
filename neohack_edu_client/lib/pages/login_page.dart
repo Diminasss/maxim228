@@ -65,8 +65,12 @@ class _LoginPageState extends State<LoginPage> {
         cookies.saveFromResponse(
             Uri.parse('$URI/login'), [Cookie('login', _nameController.text)]);
         log(cookies.toString());
-        Navigator.pushNamed(context, 'teacher_courses');
-      }
+        Navigator.pushNamed(context, '/teacher_courses');
+      } else
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Center(child: Text('No user')),
+          duration: Duration(seconds: 2),
+        ));
     }
   }
 
