@@ -47,12 +47,11 @@ def get_person() -> tuple[wrappers.Response, int]:
 def auth() -> tuple[wrappers.Response, int]:
     # Получаем данные из тела запроса в формате JSON
     request_data = request.get_json()
-
     # Извлекаем значение титла из полученных данных
     login: str = request_data.get('login')
     password_from_user: str = request_data.get('password')
     if user_is_in_table(login):
-        password = get_from_postgresql_table("users", "login", "password")
+        password = get_from_postgresql_table("users", login, "password")
         if password_from_user == password:
             return jsonify({'response': True}), 200
         else:
