@@ -19,3 +19,29 @@ def course_initialisation(course_name: str, author: str, access_group: list, lec
             (course_id, course_name, author, access_group, lectures_inside_course, tests_inside_course))
     except IntegrityError as e:
         print(e)
+
+
+def course_is_in_table(course_id: int) -> bool:
+    """
+    Есть ли курс в таблице?
+    :param course_id:
+    :return:
+    """
+    try:
+        cursor.execute(f"""SELECT EXISTS(SELECT 1 FROM course WHERE course_id = %s)""", (course_id,))
+        all_users = cursor.fetchall()
+        is_in_column = all_users[0][0]
+        return is_in_column
+    except OperationalError as e:
+        print(f"ошибка обнаружения курса {e}")
+        course_is_in_table(course_id)
+
+
+def get_all_information_from_course(course_id: int) -> dict | None:
+    if course_is_in_table(course_id):
+        cursor.execute("""SELECT course_id, course_name, author, access_group, lectures_inside_course, tests_inside_course FROM course WHERE course_id = %s""", (course_id,))
+        data: tuple = cursor.fetchall()[0]
+        data_to_send: dict = {"course_id": data[0], "course_name": data[1], "author": data[2], "access_group": data[3], "lectures_inside_course": data[4], "tests_inside_course": data[5]}
+        return data_to_send
+    else:
+        return None
