@@ -38,7 +38,7 @@ def initialisation(login: str, password: str, first_name: str, last_name: str, p
 initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", [], [])
 
 
-def edit_sqlite_table(chat_id: int, what_to_edit: str, value: str | list | int) -> None:
+def edit_sqlite_table(login: str, what_to_edit: str, value: str | list | int) -> None:
     """
     Поля для редактирования на выбор\n
     login\n
@@ -56,11 +56,13 @@ def edit_sqlite_table(chat_id: int, what_to_edit: str, value: str | list | int) 
     :return:
     """
     try:
-        sql_update_query = f"""UPDATE users SET {what_to_edit} = '{value}' WHERE user_id = {chat_id}"""
-        cursor.execute(sql_update_query)
+        sql_update_query = """UPDATE users SET %s = %s WHERE login = %s"""
+        cursor.execute(sql_update_query, (what_to_edit, value, login))
     except psycopg2.IntegrityError as e:
         print("Ошибка при редактировании:", e)
 
+
+edit_sqlite_table("example@mail.com", "current_courses", ['aaa', 'aaaa'])
 
 # Добавляем обработчик для CORS
 @app.after_request
