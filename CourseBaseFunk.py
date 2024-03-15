@@ -2,12 +2,22 @@ from DataBaseFunk import cursor
 from psycopg2 import IntegrityError, OperationalError
 
 
-def course_initialisation(course_name: str, author: str, access_group: list, lectures_inside_course: list, tests_inside_course: list) -> None:
+def course_initialisation(course_name: str, author: str, access_group: list, lectures_inside_course: list, tests_inside_course: list, return_id: bool = False) -> None | int:
+    """
+    Функция инициализации курса
+    :param course_name:
+    :param author:
+    :param access_group:
+    :param lectures_inside_course:
+    :param tests_inside_course:
+    :param return_id:
+    :return:
+    """
     try:
         cursor.execute("""SELECT EXISTS (SELECT 1 FROM course);""")
     except OperationalError as e:
         print("Ошибка доступа к базе в инициализации")
-    table_is_empty: bool = not(cursor.fetchone()[0])
+    table_is_empty: bool = not (cursor.fetchone()[0])
     if table_is_empty:
         course_id = 1
     else:
@@ -19,6 +29,9 @@ def course_initialisation(course_name: str, author: str, access_group: list, lec
             (course_id, course_name, author, access_group, lectures_inside_course, tests_inside_course))
     except IntegrityError as e:
         print(e)
+
+    if return_id:
+        return course_id
 
 
 def course_is_in_table(course_id: int) -> bool:
