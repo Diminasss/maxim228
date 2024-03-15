@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,14 +8,33 @@ import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:neohack_edu_client/classes/person.dart';
 
 class CoursesPage extends StatelessWidget {
-  CoursesPage({Key? key, this.person});
+  CoursesPage({super.key, this.person});
 
   Person? person;
 
+  Future<Map<String, dynamic>> getCoursesName() async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/course'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'login': person!.login,
+        'course_id': List.from(person!.currentCourses!)
+          ..addAll(person!.completedCourses!),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch data.');
+    }
+  }
+
   Widget _tileBuilder(List<String> currCourses, List<String> compCourses) {
     List<Widget> courseRows = [const SizedBox(width: 40)];
-    List<String> courses = currCourses.toString() as List<String>;
-    courses.addAll(compCourses);
+    List<String> courses = new List.from(currCourses)..addAll(compCourses);
     for (int i = 0; i < courses.length; i += 3) {
       List<Widget> rowCourses = [];
       rowCourses.add(const SizedBox(width: 40));
@@ -70,6 +90,7 @@ class CoursesPage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
           border: const GradientBoxBorder(
+            width: 3,
             gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -109,14 +130,12 @@ class CoursesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = (ModalRoute.of(context)?.settings.arguments ?? '')
-        as Map<String, Person>;
-    log(arguments.values.first.firstName!);
-    // if (arguments) {
-    //   person = arguments['person'];
-    // } else {
-    //   person = null;
-    // }
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        {'person': null}) as Map<String, Person?>;
+    if (arguments.values.first != null) {
+      person = arguments.values.first;
+    }
+    log(person?.login ?? 'noLog');
     return Builder(builder: (context) {
       if (person == null) {
         return _notLogged(context);
@@ -206,10 +225,26 @@ class CoursesPage extends StatelessWidget {
               ),
               SizedBox(height: 120),
               FittedBox(
-                child: _tileBuilder(
-                    person!.currentCourses!, person!.completedCourses!),
-                fit: BoxFit.scaleDown,
-              ),
+                  fit: BoxFit.scaleDown,
+                  child: Builder(builder: (context) {
+                    if (person!.completedCourses!.isEmpty &&
+                        person!.currentCourses!.isEmpty) {
+                      return Text('No courses');
+                    }
+                    return FutureBuilder(
+                        future: getCoursesName(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState != ConnectionState.done)
+                            return Placeholder();
+                          else
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              child: _tileBuilder(snapshot.data!['course_id'],
+                                  snapshot.data!['course_id']),
+                            );
+                        });
+                  })),
             ],
           ),
         ),

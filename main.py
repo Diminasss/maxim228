@@ -6,13 +6,12 @@ from UserBaseFunk import *
 
 app = Flask(__name__)
 
-# initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, [], [])
+
 # edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
 # print(get_from_postgresql_table("users", "example@mail.com", "current_courses"))
 # print(user_is_in_table("example@mail.com"))
 get_all_information_from_user_exclude_password("example@mail.com")
-
-course_initialisation("Зарубежная", "Таганков", ["example@mail.com", "maksim@levchenko.ru"], ["Уайлд", "Наполеон", "Кристи"], ["Тест 1"])
+user_initialisation("1", "1", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, [100, 101], [])
 
 
 # Добавляем обработчик для CORS
@@ -22,11 +21,6 @@ def after_request(response) -> wrappers.Response:
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     return response
-
-
-@app.route("/")
-def main_page():
-    return "Main Page"
 
 
 @app.route("/person", methods=['POST'])
@@ -61,11 +55,17 @@ def auth() -> tuple[wrappers.Response, int]:
 
 
 @app.route('/course', methods=['POST'])
-def about() -> tuple[wrappers.Response, int]:
+def about(): #-> tuple[wrappers.Response, int]:
+
     request_data = request.get_json()
-    course_id = request_data.get('course_id')
-    course_info: dict = get_all_information_from_course(course_id)
-    if course_info is not None:
+    login: str = request_data.get('login')
+    course_ids = request_data.get('course_id')
+    new_mas = []
+    for course_id in course_ids:
+        course_info: dict = get_all_information_from_course(course_id)
+        new_mas.append(course_info)
+    course_info: dict = {'login': login, 'courses': new_mas}
+    if len(new_mas) > 0:
         return jsonify(course_info), 200
     else:
         return jsonify({"response": "dontwork"}), 201

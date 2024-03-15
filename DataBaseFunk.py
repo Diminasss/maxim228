@@ -34,6 +34,14 @@ def database_connection() -> psycopg2.connect:
 
         print("Успешное создание/подключение к таблице курса")
 
+        # cursor.execute("""CREATE TABLE IF NOT EXISTS tests(
+        #         test_id integer PRIMARY KEY,
+        #         test_name varchar(100),
+        #         test_text varchar(10000) NOT NULL,
+        #         input_data varchar(10000),
+        #         output_data varchar(10000),
+        #          varchar(100))""")
+
         return cursor
     except psycopg2.OperationalError as e:
         print("Ошибка при подключении к базе данных:", e)
