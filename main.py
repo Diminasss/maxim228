@@ -5,7 +5,7 @@ from DataBaseFunk import database_connection, edit_sqlite_table, initialisation
 
 app = Flask(__name__)
 
-initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", [], [])
+initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, [], [])
 edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
 
 
