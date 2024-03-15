@@ -31,13 +31,32 @@ def database_connection() -> psycopg2.connect:
 cursor = database_connection()
 
 
+def user_is_in_table(login: str) -> bool | None:
+    """
+    Есть ли пользователь в таблице?
+    :param login:
+    :return:
+    """
+    try:
+        cursor.execute(f"""SELECT EXISTS(SELECT 1 FROM users WHERE login = %s)""", (login,))
+        all_users = cursor.fetchall()
+        is_in_column = all_users[0][0]
+        return is_in_column
+    except psycopg2.OperationalError as e:
+        print(f"ошибка обнаружения {e}")
+        user_is_in_table(login)
+
+
 # Метод по инициализации пользователя
 def initialisation(login: str, password: str, last_name: str, first_name: str, patronymic: str, date_of_birth: str, department: str, is_teacher: bool, current_courses: list, completed_courses: list) -> None:
-    try:
-        cursor.execute("""INSERT INTO users (login, password, last_name, first_name, patronymic, date_of_birth, department, is_teacher, current_courses, completed_courses) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (login, password, first_name, last_name, patronymic, date_of_birth, department, is_teacher, current_courses, completed_courses))
-        print("Успешная ")
-    except psycopg2.IntegrityError as e:
-        print("Ошибка при инициализации:", e)
+    if user_is_in_table(login):
+        pass
+    else:
+        try:
+            cursor.execute("""INSERT INTO users (login, password, last_name, first_name, patronymic, date_of_birth, department, is_teacher, current_courses, completed_courses) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (login, password, first_name, last_name, patronymic, date_of_birth, department, is_teacher, current_courses, completed_courses))
+            print("Успешная ")
+        except psycopg2.IntegrityError as e:
+            print("Ошибка при инициализации:", e)
 
 
 def edit_sqlite_table(table_name: str, login: str, what_to_edit: str, value: str | list | int) -> None:
@@ -60,17 +79,24 @@ def edit_sqlite_table(table_name: str, login: str, what_to_edit: str, value: str
     :param value:
     :return:
     """
-    try:
-        cursor.execute(f"""UPDATE {table_name} SET {what_to_edit} = %s WHERE login = %s""", (value, login))
-    except psycopg2.IntegrityError as e:
-        print("Ошибка при редактировании:", e)
+    if user_is_in_table(login):
+        try:
+            cursor.execute(f"""UPDATE {table_name} SET {what_to_edit} = %s WHERE login = %s""", (value, login))
+        except psycopg2.IntegrityError as e:
+            print("Ошибка при редактировании:", e)
+    else:
+        print("Нет записи по логину")
 
 
 def get_from_postgresql_table(table_name: str, login: str, what_to_get: str) -> str | list | int | bool | None:
-    try:
-        cursor.execute(f"""SELECT {what_to_get} FROM {table_name} WHERE login = %s""", (login,))
-        value = cursor.fetchone()[0]
-        return value if value is not None else None
-    except psycopg2.IntegrityError as e:
-        print("Ошибка получения данных при подключении:", e)
+    """Функция возвращает None, если не находит данные"""
+    if user_is_in_table(login):
+        try:
+            cursor.execute(f"""SELECT {what_to_get} FROM {table_name} WHERE login = %s""", (login,))
+            value = cursor.fetchone()[0]
+            return value if value is not None else None
+        except psycopg2.IntegrityError as e:
+            print("Ошибка получения данных при подключении:", e)
+            return None
+    else:
         return None

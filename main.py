@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from config import *
-from DataBaseFunk import edit_sqlite_table, initialisation, get_from_postgresql_table
+from DataBaseFunk import user_is_in_table, edit_sqlite_table, initialisation, get_from_postgresql_table
 
 
 app = Flask(__name__)
@@ -8,6 +8,7 @@ app = Flask(__name__)
 initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, [], [])
 edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
 print(get_from_postgresql_table("users", "example@mail.com", "current_courses"))
+print(user_is_in_table("example@mail.com"))
 
 
 # Добавляем обработчик для CORS
@@ -31,14 +32,18 @@ def auth():
     request_data = request.get_json()
 
     # Извлекаем значение титла из полученных данных
-    title = request_data.get('login')
-    print(request_data)
+    login: str = request_data.get('login')
+    password_from_user: str = request_data.get('password')
+    print(login, password_from_user)
+    if user_is_in_table(login):
+        password = get_from_postgresql_table("users", "login", "password")
+        if password_from_user == password:
+            return jsonify({'response': True}), 200
+        else:
+            return jsonify({'response': True}), 200
+    else:
+        return jsonify({'response': False}), 200
 
-    # Выводим значение титла на экран
-    print("Title:", title)
-
-    # Отправляем ответ об успешном выполнении
-    return jsonify({'message': 'Засунь в попку))))'}), 200
 
 
 @app.route('/about', methods=['POST'])
