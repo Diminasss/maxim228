@@ -49,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (response.statusCode == 200) {
+      log('200, ${response.body}, $pass');
       return jsonDecode(response.body)['response'];
     } else {
       throw Exception('Failed to fetch data.');

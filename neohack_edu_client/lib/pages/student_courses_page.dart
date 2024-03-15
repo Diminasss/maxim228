@@ -13,8 +13,9 @@ class CoursesPage extends StatelessWidget {
 
   Widget _tileBuilder(List<String> currCourses, List<String> compCourses) {
     List<Widget> courseRows = [const SizedBox(width: 40)];
-    List<String> courses = currCourses.toString() as List<String>;
-    courses.addAll(compCourses);
+    log('_tileStart1');
+    var courses = new List.from(currCourses)..addAll(compCourses);
+    log('_tileStart');
     for (int i = 0; i < courses.length; i += 3) {
       List<Widget> rowCourses = [];
       rowCourses.add(const SizedBox(width: 40));
@@ -70,6 +71,7 @@ class CoursesPage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
           border: const GradientBoxBorder(
+            width: 3,
             gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -109,14 +111,12 @@ class CoursesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = (ModalRoute.of(context)?.settings.arguments ?? '')
-        as Map<String, Person>;
-    log(arguments.values.first.firstName!);
-    // if (arguments) {
-    //   person = arguments['person'];
-    // } else {
-    //   person = null;
-    // }
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        {'person': null}) as Map<String, Person?>;
+    if (arguments.values.first != null) {
+      person = arguments.values.first;
+    }
+    log(person?.login ?? 'noLog');
     return Builder(builder: (context) {
       if (person == null) {
         return _notLogged(context);
@@ -206,8 +206,15 @@ class CoursesPage extends StatelessWidget {
               ),
               SizedBox(height: 120),
               FittedBox(
-                child: _tileBuilder(
-                    person!.currentCourses!, person!.completedCourses!),
+                child: Builder(builder: (context) {
+                  if (person!.completedCourses!.isEmpty &&
+                      person!.currentCourses!.isEmpty) {
+                    return Text('No courses');
+                  }
+                  log('${person!.completedCourses!}');
+                  return _tileBuilder(
+                      person!.currentCourses!, person!.completedCourses!);
+                }),
                 fit: BoxFit.scaleDown,
               ),
             ],

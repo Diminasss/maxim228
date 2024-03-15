@@ -6,10 +6,10 @@ from UserBaseFunk import *
 
 app = Flask(__name__)
 
-# initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, [], [])
-# edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
-# print(get_from_postgresql_table("users", "example@mail.com", "current_courses"))
-# print(user_is_in_table("example@mail.com"))
+user_initialisation("1", "1", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, ['13 dima , please', '213'], ['2'])
+edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
+print(get_from_postgresql_table("users", "example@mail.com", "current_courses"))
+print(user_is_in_table("example@mail.com"))
 get_all_information_from_user_exclude_password("example@mail.com")
 
 course_initialisation("Зарубежная", "Таганков", ["example@mail.com", "maksim@levchenko.ru"], ["Уайлд", "Наполеон", "Кристи"], ["Тест 1"])
@@ -52,7 +52,7 @@ def auth() -> tuple[wrappers.Response, int]:
     login: str = request_data.get('login')
     password_from_user: str = request_data.get('password')
     if user_is_in_table(login):
-        password = get_from_postgresql_table("users", "login", "password")
+        password = get_from_postgresql_table("users", login, "password")
         if password_from_user == password:
             return jsonify({'response': True}), 200
         else:
