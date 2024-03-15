@@ -35,21 +35,41 @@ AlertDialog _notLogged(BuildContext context) {
 // }
 
 class _StudentCourseState extends State<StudentCourse> {
+  Future<List<Map<String, dynamic>>> getCoursesName() async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/course'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'login': person!.login,
+        'course_id': List.from(person!.currentCourses!)
+          ..addAll(person!.completedCourses!),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return List.from(jsonDecode(response.body)['courses']);
+    } else {
+      throw Exception('Failed to fetch data.');
+    }
+  }
+
   Person? person;
+  int? course_id;
 
   @override
   Widget build(BuildContext context) {
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
-        {'person': null, 'course_id': 1}) as Map<String, dynamic>;
-    if (arguments[person] != null) {
-      person = arguments[person];
+        {'person': null, 'course_id': 0}) as Map<String, dynamic>;
+    if (arguments['person'] == null || arguments['course_id'] == 0) {
+      return _notLogged(context);
     }
+
+    person = arguments['person'];
+    course_id = arguments['course_id'];
+
     return Builder(builder: (context) {
-      person = Person(lastName: 'gamerboy');
-      person!.firstName = 'Dima';
-      if (person == null) {
-        return _notLogged(context);
-      }
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,

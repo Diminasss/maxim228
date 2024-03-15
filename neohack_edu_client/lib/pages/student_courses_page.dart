@@ -24,7 +24,6 @@ class CoursesPage extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      log(jsonDecode(response.body)['courses'].toString());
       return List.from(jsonDecode(response.body)['courses']);
     } else {
       throw Exception('Failed to fetch data.');
@@ -34,7 +33,6 @@ class CoursesPage extends StatelessWidget {
   Widget _tileBuilder(
       List<Map<dynamic, dynamic>> courses, int currSize, BuildContext context) {
     List<Widget> courseRows = [const SizedBox(width: 40)];
-    log(courses.length.toString());
     for (int i = 0; i < courses.length; i += 3) {
       List<Widget> rowCourses = [];
       rowCourses.add(const SizedBox(width: 40));
@@ -82,6 +80,10 @@ class CoursesPage extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             course,
+            softWrap: true,
+            overflow: TextOverflow.fade,
+            maxLines: 3,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 30,
@@ -121,6 +123,10 @@ class CoursesPage extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             course,
+            softWrap: true,
+            overflow: TextOverflow.fade,
+            maxLines: 3,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color.fromARGB(255, 0, 0, 0),
               fontSize: 30,
@@ -256,8 +262,7 @@ class CoursesPage extends StatelessWidget {
                           return const CircularProgressIndicator();
                         }
                         if (snapshot.hasError) {
-                          log(snapshot.error.toString());
-                          return const Placeholder();
+                          return Text(snapshot.error.toString());
                         }
                         return _tileBuilder(snapshot.data!,
                             person!.currentCourses!.length, context);
