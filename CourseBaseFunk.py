@@ -39,7 +39,10 @@ def course_is_in_table(course_id: int) -> bool:
 
 def get_all_information_from_course(course_id: int) -> dict | None:
     if course_is_in_table(course_id):
-        cursor.execute("""SELECT course_id, course_name, author, access_group, lectures_inside_course, tests_inside_course FROM course WHERE course_id = %s""", (course_id,))
+        try:
+            cursor.execute("""SELECT course_id, course_name, author, access_group, lectures_inside_course, tests_inside_course FROM course WHERE course_id = %s""", (course_id,))
+        except OperationalError as e:
+            print(e)
         data: tuple = cursor.fetchall()[0]
         data_to_send: dict = {"course_id": data[0], "course_name": data[1], "author": data[2], "access_group": data[3], "lectures_inside_course": data[4], "tests_inside_course": data[5]}
         return data_to_send
