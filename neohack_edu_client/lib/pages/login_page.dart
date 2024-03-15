@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,10 +34,30 @@ class _LoginPageState extends State<LoginPage> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  void _saveForm() {
+  Future<String> _isLoginSuccess(String login, String pass) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/auth'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'login': login,
+        'password': pass,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['message'];
+    } else {
+      throw Exception('Failed to fetch data.');
+    }
+  }
+
+  void _saveForm() async {
     if (_formKey.currentState!.validate()) {
-      //TODO: Implement saving form
-      Navigator.pushNamed(context, '/main');
+      String str =
+          await _isLoginSuccess(_nameController.text, _passwordController.text);
+      log(str);
     }
   }
 
