@@ -6,16 +6,7 @@ from DataBaseFunk import database_connection, edit_sqlite_table, initialisation
 app = Flask(__name__)
 
 initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", [], [])
-
-edit_sqlite_table('example@mail.com', 'last_name', 'Жуков')
-edit_sqlite_table('example@mail.com', "password", "NEW PASS")
-edit_sqlite_table('example@mail.com', "first_name", "Максим")
-edit_sqlite_table('example@mail.com', "last_name", "Левчеко")
-edit_sqlite_table('example@mail.com', "patronymic", "Сергеевич")
-edit_sqlite_table('example@mail.com', "date_of_birth", "2022-03-23")
-edit_sqlite_table('example@mail.com', "department", "4217")
-edit_sqlite_table('example@mail.com', "current_courses", ["Математика"])
-edit_sqlite_table('example@mail.com', "completed_courses", ["Русский", "Английский"])
+edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
 
 
 # Добавляем обработчик для CORS

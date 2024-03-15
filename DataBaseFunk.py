@@ -39,9 +39,11 @@ def initialisation(login: str, password: str, last_name: str, first_name: str, p
         print("Ошибка при инициализации:", e)
 
 
-def edit_sqlite_table(login: str, what_to_edit: str, value: str | list | int) -> None:
+def edit_sqlite_table(table_name: str, login: str, what_to_edit: str, value: str | list | int) -> None:
     """
-    Поля для редактирования на выбор\n
+    Таблицы на выбор:\n
+    users\n\n
+    Поля на выбор:\n
     login\n
     password\n
     first_name\n
@@ -50,13 +52,18 @@ def edit_sqlite_table(login: str, what_to_edit: str, value: str | list | int) ->
     date_of_birth\n
     department\n
     current_courses\n
-    completed_courses
+    completed_courses\n
+    :param table_name:
     :param login:
     :param what_to_edit:
     :param value:
     :return:
     """
     try:
-        cursor.execute(f"""UPDATE users SET {what_to_edit} = %s WHERE login = %s""", (value, login))
+        cursor.execute(f"""UPDATE {table_name} SET {what_to_edit} = %s WHERE login = %s""", (value, login))
     except psycopg2.IntegrityError as e:
         print("Ошибка при редактировании:", e)
+
+
+def get_from_postgresql_table(table_name: str, login: str, what_to_get: str) -> str | list | int:
+    pass
