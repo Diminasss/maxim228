@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:neohack_edu_client/classes/person.dart';
 
 const String URI = 'http://localhost:5000';
 
@@ -56,12 +55,34 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<Person> _getPerson(String login) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/person'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'login': login,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return Person.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to fetch data.');
+    }
+  }
+
   void _saveForm() async {
     if (_formKey.currentState!.validate()) {
       bool isSuccess =
           await _isLoginSuccess(_nameController.text, _passwordController.text);
       if (isSuccess) {
-        Navigator.pushNamed(context, '/teacher_courses');
+        Person person = await _getPerson(_nameController.text);
+        log(person.firstName!);
+        Navigator.pushNamed(
+            context, '/${person.isTeacher! ? 'teacher' : 'student'}_courses',
+            arguments: {'person': person});
       } else
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Center(child: Text('No user')),
