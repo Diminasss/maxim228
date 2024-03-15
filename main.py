@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from config import *
-from DataBaseFunk import database_connection, edit_sqlite_table, initialisation
+from DataBaseFunk import edit_sqlite_table, initialisation, get_from_postgresql_table
 
 
 app = Flask(__name__)
 
 initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", False, [], [])
 edit_sqlite_table("users", "example@mail.com", "first_name", "Максим")
+print(get_from_postgresql_table("users", "example@mail.com", "current_courses"))
 
 
 # Добавляем обработчик для CORS

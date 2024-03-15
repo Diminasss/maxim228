@@ -8,9 +8,9 @@ def database_connection() -> psycopg2.connect:
         connection = psycopg2.connect(user=username, password=password, host=host, port=port,
                                       database=database_name)
         connection.autocommit = True
-        cursor1 = connection.cursor()
+        cursor = connection.cursor()
 
-        cursor1.execute("""CREATE TABLE IF NOT EXISTS users(
+        cursor.execute("""CREATE TABLE IF NOT EXISTS users(
         login varchar(100) PRIMARY KEY,
         password varchar(20) NOT NULL,
         last_name varchar(100) NOT NULL,
@@ -23,7 +23,7 @@ def database_connection() -> psycopg2.connect:
         completed_courses VARCHAR(255) ARRAY)""")
 
         print("Успешное создание/подключение к таблице")
-        return cursor1
+        return cursor
     except psycopg2.OperationalError as e:
         print("Ошибка при подключении к базе данных:", e)
 
@@ -66,8 +66,11 @@ def edit_sqlite_table(table_name: str, login: str, what_to_edit: str, value: str
         print("Ошибка при редактировании:", e)
 
 
-# def get_from_postgresql_table(table_name: str, login: str, what_to_get: str) -> str | list | int | bool:
-#     try:
-#         cursor.execute(f"""SELECT {what_to_get} FROM users WHERE user_id = {chat_id}""")
-#         value = cursor.fetchone()[0]
-#         return value
+def get_from_postgresql_table(table_name: str, login: str, what_to_get: str) -> str | list | int | bool | None:
+    try:
+        cursor.execute(f"""SELECT {what_to_get} FROM {table_name} WHERE login = %s""", (login,))
+        value = cursor.fetchone()[0]
+        return value if value is not None else None
+    except psycopg2.IntegrityError as e:
+        print("Ошибка получения данных при подключении:", e)
+        return None
