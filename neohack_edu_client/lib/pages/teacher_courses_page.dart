@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -11,11 +14,34 @@ class TeachCoursesPage extends StatelessWidget {
 
   Person? person;
 
-  Widget _tileBuilder(List<String> currCourses, List<String> compCourses) {
+  Future<String> getCourseName(int course_id) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/person'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'course_id': ('course_id'),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['course_name'];
+    } else {
+      throw Exception('Failed to fetch data.');
+    }
+  }
+
+  Widget _tileBuilder(List<int> currCourses, List<int> compCourses) {
     List<Widget> courseRows = [const SizedBox(width: 40)];
-    log('_tileStart1');
-    var courses = new List.from(currCourses)..addAll(compCourses);
-    log('_tileStart');
+    var combineCourses = new List.from(currCourses)..addAll(compCourses);
+    final List<String> courses = [];
+    combineCourses.forEach((element) async {
+      log('$element');
+      courses.add(await getCourseName(
+        int.parse(element),
+      ));
+    });
     for (int i = 0; i < courses.length; i += 3) {
       List<Widget> rowCourses = [];
       rowCourses.add(const SizedBox(width: 40));

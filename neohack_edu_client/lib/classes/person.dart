@@ -10,8 +10,8 @@ class Person {
   String? dateOfBirth;
   String? department;
   bool? isTeacher;
-  List<String>? currentCourses;
-  List<String>? completedCourses;
+  List<int>? currentCourses;
+  List<int>? completedCourses;
 
   Person(
       {this.login,
@@ -38,13 +38,13 @@ class Person {
     completedCourses = [];
     List<dynamic> curr = List.from(json['current_courses']);
     for (var element in curr) {
-      log(element);
-      currentCourses!.add('$element');
+      log('$element curr');
+      currentCourses!.add(int.parse(element));
     }
     List<dynamic> comp = List.from(json['completed_courses']);
     for (var element in comp) {
       log(element);
-      completedCourses!.add('$element');
+      completedCourses!.add(int.parse(element));
     }
   }
 }

@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,15 +8,31 @@ import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:neohack_edu_client/classes/person.dart';
 
 class CoursesPage extends StatelessWidget {
-  CoursesPage({Key? key, this.person});
+  CoursesPage({super.key, this.person});
 
   Person? person;
 
+  Future<String> getCourseName(int course_id) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/course'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, int>{
+        'course_id': course_id,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['course_name'];
+    } else {
+      throw Exception('Failed to fetch data.');
+    }
+  }
+
   Widget _tileBuilder(List<String> currCourses, List<String> compCourses) {
     List<Widget> courseRows = [const SizedBox(width: 40)];
-    log('_tileStart1');
-    var courses = new List.from(currCourses)..addAll(compCourses);
-    log('_tileStart');
+    List<String> courses = new List.from(currCourses)..addAll(compCourses);
     for (int i = 0; i < courses.length; i += 3) {
       List<Widget> rowCourses = [];
       rowCourses.add(const SizedBox(width: 40));
@@ -206,17 +223,31 @@ class CoursesPage extends StatelessWidget {
               ),
               SizedBox(height: 120),
               FittedBox(
-                child: Builder(builder: (context) {
-                  if (person!.completedCourses!.isEmpty &&
-                      person!.currentCourses!.isEmpty) {
-                    return Text('No courses');
-                  }
-                  log('${person!.completedCourses!}');
-                  return _tileBuilder(
-                      person!.currentCourses!, person!.completedCourses!);
-                }),
-                fit: BoxFit.scaleDown,
-              ),
+                  fit: BoxFit.scaleDown,
+                  child: Builder(builder: (context) {
+                    if (person!.completedCourses!.isEmpty &&
+                        person!.currentCourses!.isEmpty) {
+                      return Text('No courses');
+                    }
+                    List<String> completedCoursesName = [];
+                    person!.completedCourses!.forEach((element) async {
+                      completedCoursesName.add(await getCourseName(element));
+                    });
+
+                    List<String> currentCoursesName = [];
+                    person!.currentCourses!.forEach((element) async {
+                      print(element);
+                      print(getCourseName(element));
+                      currentCoursesName.add(await getCourseName(element));
+                    });
+
+                    return Container(
+                      width: 100,
+                      height: 100,
+                      child: _tileBuilder(
+                          currentCoursesName, completedCoursesName),
+                    );
+                  })),
             ],
           ),
         ),
