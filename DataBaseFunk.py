@@ -71,6 +71,7 @@ def edit_sqlite_table(table_name: str, login: str, what_to_edit: str, value: str
     patronymic\n
     date_of_birth\n
     department\n
+    is_teacher\n
     current_courses\n
     completed_courses\n
     :param table_name:
@@ -89,7 +90,24 @@ def edit_sqlite_table(table_name: str, login: str, what_to_edit: str, value: str
 
 
 def get_from_postgresql_table(table_name: str, login: str, what_to_get: str) -> str | list | int | bool | None:
-    """Функция возвращает None, если не находит данные"""
+    """Функция возвращает None, если не находит данные\n
+    Таблицы на выбор:\n
+    users\n\n
+    Поля на выбор:\n
+    login\n
+    password\n
+    first_name\n
+    last_name\n
+    patronymic\n
+    date_of_birth\n
+    department\n
+    is_teacher\n
+    current_courses\n
+    completed_courses\n
+    :param table_name:
+    :param login:
+    :param what_to_get:
+    :return str | list | int | bool"""
     if user_is_in_table(login):
         try:
             cursor.execute(f"""SELECT {what_to_get} FROM {table_name} WHERE login = %s""", (login,))
@@ -100,3 +118,16 @@ def get_from_postgresql_table(table_name: str, login: str, what_to_get: str) -> 
             return None
     else:
         return None
+
+
+def get_all_information_from_database_exclude_password(login: str) -> dict | None:
+    if user_is_in_table(login):
+        cursor.execute("""SELECT login, password, last_name, first_name, patronymic, date_of_birth, department, is_teacher, current_courses, completed_courses FROM users WHERE login = %s""", (login,))
+        data: tuple = cursor.fetchall()[0]
+        data_to_send: dict = {"login": data[0], "password": data[1], "last_name": data[2], "first_name": data[3],
+                              "patronymic": data[4], "date_of_birth": data[5], "department": data[6],
+                              "is_teacher": data[7], "current_courses": data[8], "completed_courses": data[9]}
+        print(data_to_send)
+    else:
+        return None
+    return data_to_send
