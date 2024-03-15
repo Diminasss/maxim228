@@ -7,8 +7,8 @@ environment:
   sdk: '>=3.3.1 <4.0.0'
 
 dependencies:
-  flutter:
-    sdk: flutter
+  flutter_web_plugins: 
+    sdk: flutter 
   http: ^1.2.1
 
 dev_dependencies:
@@ -18,3 +18,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+assets:
+  - ./assets/icons/neoflex_logo.png
+  
