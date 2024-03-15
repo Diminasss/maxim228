@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, wrappers
 from config import *
-from DataBaseFunk import user_is_in_table, edit_sqlite_table, initialisation, get_from_postgresql_table, get_all_information_from_database_exclude_password
+from CourseBaseFunk import *
+from UserBaseFunk import *
 
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ app = Flask(__name__)
 # print(user_is_in_table("example@mail.com"))
 get_all_information_from_database_exclude_password("example@mail.com")
 
+course_initialisation("Зарубежная", "Таганков", ["example@mail.com", "maksim@levchenko.ru"], ["Уайлд", "Наполеон", "Кристи"], ["Тест 1"])
 
 # Добавляем обработчик для CORS
 @app.after_request
@@ -37,7 +39,6 @@ def get_person() -> tuple[wrappers.Response, int]:
     return jsonify(person_info), 200
 
 
-
 @app.route('/auth', methods=['POST'])
 def auth() -> tuple[wrappers.Response, int]:
     # Получаем данные из тела запроса в формате JSON
@@ -49,7 +50,6 @@ def auth() -> tuple[wrappers.Response, int]:
     if user_is_in_table(login):
         password = get_from_postgresql_table("users", "login", "password")
         if password_from_user == password:
-            print(type(jsonify({'response': True}), 200))
             return jsonify({'response': True}), 200
         else:
             return jsonify({'response': True}), 200
@@ -57,16 +57,16 @@ def auth() -> tuple[wrappers.Response, int]:
         return jsonify({'response': False}), 200
 
 
-@app.route('/about', methods=['POST'])
+@app.route('/course', methods=['POST'])
 def about() -> tuple[wrappers.Response, int]:
     # Получаем данные из тела запроса в формате JSON
     request_data = request.get_json()
     # Извлекаем значение титла из полученных данных
     title = request_data.get('title')
-    print(request_data)
+    #print(request_data)
 
     # Выводим значение титла на экран
-    print("Title:", title)
+    #print("Title:", title)
 
     # Отправляем ответ об успешном выполнении
     return jsonify({'message': 'Засунь в попку))))'}), 200
