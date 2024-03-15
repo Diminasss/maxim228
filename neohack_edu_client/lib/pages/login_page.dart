@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'dart:io';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+const String URI = 'http://localhost:5000';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  Future<String> _isLoginSuccess(String login, String pass) async {
+  Future<bool> _isLoginSuccess(String login, String pass) async {
     final response = await http.post(
       Uri.parse('http://localhost:5000/auth'),
       headers: <String, String>{
@@ -47,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['message'];
+      return jsonDecode(response.body)['response'];
     } else {
       throw Exception('Failed to fetch data.');
     }
@@ -55,9 +58,15 @@ class _LoginPageState extends State<LoginPage> {
 
   void _saveForm() async {
     if (_formKey.currentState!.validate()) {
-      String str =
+      bool isSuccess =
           await _isLoginSuccess(_nameController.text, _passwordController.text);
-      log(str);
+      if (isSuccess) {
+        CookieJar cookies = CookieJar();
+        cookies.saveFromResponse(
+            Uri.parse('$URI/login'), [Cookie('login', _nameController.text)]);
+        log(cookies.toString());
+        Navigator.pushNamed(context, 'teacher_courses');
+      }
     }
   }
 

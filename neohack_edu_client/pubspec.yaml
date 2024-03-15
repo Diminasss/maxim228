@@ -10,6 +10,7 @@ dependencies:
   flutter_web_plugins: 
     sdk: flutter 
   http: ^1.2.1
+  cookie_jar: ^4.0.8
 
 dev_dependencies:
   flutter_test:
