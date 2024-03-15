@@ -1,67 +1,22 @@
 from flask import Flask, request, jsonify
 from config import *
-import psycopg2
+from DataBaseFunk import database_connection, edit_sqlite_table, initialisation
+
 
 app = Flask(__name__)
 
-# Инициализация БД
-try:
-    connection = psycopg2.connect(user="postgres", password="qwerty", host="127.0.0.1", port="5432", database="postgres")
-    connection.autocommit = True
-    cursor = connection.cursor()
-
-    cursor.execute("""CREATE TABLE IF NOT EXISTS users(
-    login varchar(100) PRIMARY KEY,
-    password varchar(20) NOT NULL,
-    last_name varchar(100) NOT NULL,
-    first_name varchar(100) NOT NULL,
-    patronymic varchar(100) NOT NULL,
-    date_of_birth date NOT NULL,
-    department varchar(100) NOT NULL,
-    current_courses VARCHAR(255) ARRAY,
-    completed_courses VARCHAR(255) ARRAY)""")
-
-    print("Успешное создание/подключение к таблице")
-except psycopg2.OperationalError as e:
-    print("Ошибка при подключении к базе данных:", e)
-
-
-# Метод по инициализации пользователя
-def initialisation(login: str, password: str, last_name: str, first_name: str, patronymic: str, date_of_birth: str, department: str, current_courses: list, completed_courses: list) -> None:
-    try:
-        cursor.execute("""INSERT INTO users (login, password, last_name, first_name, patronymic, date_of_birth, department, current_courses, completed_courses) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", (login, password, first_name, last_name, patronymic, date_of_birth, department, current_courses, completed_courses))
-        print("Успешная ")
-    except psycopg2.IntegrityError as e:
-        print("Ошибка при инициализации:", e)
-
-
 initialisation("example@mail.com", "pass228339", "Дима", "Никитин", "Михайлович", "2004-10-21", "ГУАП", [], [])
 
-
-def edit_sqlite_table(login: str, what_to_edit: str, value: str | list | int) -> None:
-    """
-    Поля для редактирования на выбор\n
-    login\n
-    password\n
-    first_name\n
-    last_name\n
-    patronymic\n
-    date_of_birth\n
-    department\n
-    current_courses\n
-    completed_courses
-    :param login:
-    :param what_to_edit:
-    :param value:
-    :return:
-    """
-    try:
-        cursor.execute(f"""UPDATE users SET {what_to_edit} = %s WHERE login = %s""", (value, login))
-    except psycopg2.IntegrityError as e:
-        print("Ошибка при редактировании:", e)
-
-
 edit_sqlite_table('example@mail.com', 'last_name', 'Жуков')
+edit_sqlite_table('example@mail.com', "password", "NEW PASS")
+edit_sqlite_table('example@mail.com', "first_name", "Максим")
+edit_sqlite_table('example@mail.com', "last_name", "Левчеко")
+edit_sqlite_table('example@mail.com', "patronymic", "Сергеевич")
+edit_sqlite_table('example@mail.com', "date_of_birth", "2022-03-23")
+edit_sqlite_table('example@mail.com', "department", "4217")
+edit_sqlite_table('example@mail.com', "current_courses", ["Математика"])
+edit_sqlite_table('example@mail.com', "completed_courses", ["Русский", "Английский"])
+
 
 # Добавляем обработчик для CORS
 @app.after_request
