@@ -1,4 +1,3 @@
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:neohack_edu_client/colorscheme/color_schemes.g.dart';
