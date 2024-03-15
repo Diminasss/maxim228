@@ -61,10 +61,6 @@ class _LoginPageState extends State<LoginPage> {
       bool isSuccess =
           await _isLoginSuccess(_nameController.text, _passwordController.text);
       if (isSuccess) {
-        CookieJar cookies = CookieJar();
-        cookies.saveFromResponse(
-            Uri.parse('$URI/login'), [Cookie('login', _nameController.text)]);
-        log(cookies.toString());
         Navigator.pushNamed(context, '/teacher_courses');
       } else
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
