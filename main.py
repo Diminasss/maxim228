@@ -61,7 +61,6 @@ def auth() -> tuple[wrappers.Response, int]:
 def about() -> tuple[wrappers.Response, int]:
     # Получаем данные из тела запроса в формате JSON
     request_data = request.get_json()
-
     # Извлекаем значение титла из полученных данных
     title = request_data.get('title')
     print(request_data)
