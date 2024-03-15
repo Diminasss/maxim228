@@ -6,17 +6,17 @@ from task_check import check_file
 
 folder_name = datetime.datetime.now().strftime("%H%M%S")
 file_path = "https://github.com/lezhev/Neo.edu"
-extended_output = "15"
-task_input = "sum_process([1, 2, 3, 4, 5])"
+expected_output = '[1, 2, 3, 4, 5, 6, 7, 8, 9]\n'
+task_input = "merge_sort([4, 2, 7, 1, 9, 5, 3, 8, 6])"
 
 clone(folder_name, file_path)
 
-with open(f"D:/Neo.edu/cloned_repos/{folder_name}/main.py", "a") as file:
-    file.write(f"print({task_input})")
+with open(f"cloned_repos/{folder_name}/main.py", "a") as file:
+    file.write(f"\nprint({task_input})")
     file.flush()
     file.close()
 
-if check_file(f"D:/Neo.edu/cloned_repos/{folder_name}/main.py", extended_output):
+if check_file(f"cloned_repos/{folder_name}/main.py", expected_output):
     print("ok")
 else:
     print("ne ok")
