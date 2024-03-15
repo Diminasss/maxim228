@@ -29,18 +29,24 @@ AlertDialog _notLogged(BuildContext context) {
   );
 }
 
+// Future<Widget> getCourse() async {
+
+//   return ListView.builder(itemBuilder: itemBuilder)
+// }
+
 class _StudentCourseState extends State<StudentCourse> {
   Person? person;
 
   @override
   Widget build(BuildContext context) {
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
-        {'person': null}) as Map<String, Person?>;
-    if (arguments.values.first != null) {
-      person = arguments.values.first;
+        {'person': null, 'course_id': 1}) as Map<String, dynamic>;
+    if (arguments[person] != null) {
+      person = arguments[person];
     }
-    log(person?.login ?? 'noLog');
     return Builder(builder: (context) {
+      person = Person(lastName: 'gamerboy');
+      person!.firstName = 'Dima';
       if (person == null) {
         return _notLogged(context);
       }

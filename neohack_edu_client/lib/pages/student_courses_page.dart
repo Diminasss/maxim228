@@ -12,19 +12,21 @@ class CoursesPage extends StatelessWidget {
 
   Person? person;
 
-  Future<String> getCourseName(int course_id) async {
+  Future<Map<String, dynamic>> getCoursesName() async {
     final response = await http.post(
       Uri.parse('http://localhost:5000/course'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, int>{
-        'course_id': course_id,
+      body: jsonEncode(<String, dynamic>{
+        'login': person!.login,
+        'course_id': List.from(person!.currentCourses!)
+          ..addAll(person!.completedCourses!),
       }),
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['course_name'];
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to fetch data.');
     }
@@ -229,24 +231,19 @@ class CoursesPage extends StatelessWidget {
                         person!.currentCourses!.isEmpty) {
                       return Text('No courses');
                     }
-                    List<String> completedCoursesName = [];
-                    person!.completedCourses!.forEach((element) async {
-                      completedCoursesName.add(await getCourseName(element));
-                    });
-
-                    List<String> currentCoursesName = [];
-                    person!.currentCourses!.forEach((element) async {
-                      print(element);
-                      print(getCourseName(element));
-                      currentCoursesName.add(await getCourseName(element));
-                    });
-
-                    return Container(
-                      width: 100,
-                      height: 100,
-                      child: _tileBuilder(
-                          currentCoursesName, completedCoursesName),
-                    );
+                    return FutureBuilder(
+                        future: getCoursesName(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState != ConnectionState.done)
+                            return Placeholder();
+                          else
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              child: _tileBuilder(snapshot.data!['course_id'],
+                                  snapshot.data!['course_id']),
+                            );
+                        });
                   })),
             ],
           ),

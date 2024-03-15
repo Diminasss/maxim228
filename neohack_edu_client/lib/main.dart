@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:neohack_edu_client/colorscheme/color_schemes.g.dart';
+import 'package:neohack_edu_client/pages/student_course.dart';
 import 'package:neohack_edu_client/pages/student_courses_page.dart';
 import 'package:neohack_edu_client/pages/login_page.dart';
 import 'package:neohack_edu_client/pages/main_page.dart';
@@ -20,6 +21,7 @@ void main() {
       '/student_courses': (context) => CoursesPage(),
       '/teacher_courses': (context) => TeachCoursesPage(),
       '/teacher_courses/course': (context) => TeacherCourse(),
+      '/student_courses/course': (context) => StudentCourse(),
       //TODO implement course page
     },
   ));
