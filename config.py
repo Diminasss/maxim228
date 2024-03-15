@@ -1,0 +1,6 @@
+username = "user"
+password = "qwerty"
+host = "localhost"
+port = "5432"
+database_name = "Local"
+client_encoding = "utf-8"
