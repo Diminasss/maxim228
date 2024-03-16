@@ -7,55 +7,11 @@ import 'package:flutter/widgets.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:neohack_edu_client/classes/person.dart';
 
-class StudentCourse extends StatefulWidget {
-  const StudentCourse({super.key});
+class StudentCourse extends StatelessWidget {
+  StudentCourse({super.key, person, courseId});
 
-  @override
-  State<StudentCourse> createState() => _StudentCourseState();
-}
-
-AlertDialog _notLogged(BuildContext context) {
-  return AlertDialog(
-    content: Text('you are not logged in, please try again'),
-    title: Text('Error'),
-    actions: [
-      TextButton(
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/main', (route) => false);
-          },
-          child: Text('Go to main'))
-    ],
-  );
-}
-
-// Future<Widget> getCourse() async {
-
-//   return ListView.builder(itemBuilder: itemBuilder)
-// }
-
-Future<dynamic> getCoursesName(login, courseId) async {
-  final response = await http.post(
-    Uri.parse('http://localhost:5000/course'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'login': login,
-      'course_id': [courseId],
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    var answer = List.from(jsonDecode(response.body)['courses']);
-    return answer;
-  } else {
-    throw Exception('Failed to fetch data.');
-  }
-}
-
-class _StudentCourseState extends State<StudentCourse> {
   Person? person;
+
   int? courseId;
 
   @override
@@ -182,6 +138,41 @@ class _StudentCourseState extends State<StudentCourse> {
         ),
       ),
     );
+  }
+}
+
+AlertDialog _notLogged(BuildContext context) {
+  return AlertDialog(
+    content: Text('you are not logged in, please try again'),
+    title: Text('Error'),
+    actions: [
+      TextButton(
+          onPressed: () {
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/main', (route) => false);
+          },
+          child: Text('Go to main'))
+    ],
+  );
+}
+
+Future<dynamic> getCoursesName(login, courseId) async {
+  final response = await http.post(
+    Uri.parse('http://localhost:5000/course'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'login': login,
+      'course_id': [courseId],
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    var answer = List.from(jsonDecode(response.body)['courses']);
+    return answer;
+  } else {
+    throw Exception('Failed to fetch data.');
   }
 }
 
