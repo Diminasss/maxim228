@@ -7,6 +7,7 @@ import 'package:neohack_edu_client/pages/main_page.dart';
 import 'package:neohack_edu_client/pages/student/student_courses_page.dart';
 import 'package:neohack_edu_client/pages/student/student_test_page.dart';
 import 'package:neohack_edu_client/pages/teacher/teacher_course.dart';
+import 'package:neohack_edu_client/pages/teacher/teacher_course_homework.dart';
 import 'package:neohack_edu_client/pages/teacher/teacher_courses_page.dart';
 
 void main() {
@@ -23,6 +24,7 @@ void main() {
       '/student_courses': (context) => CoursesPage(),
       '/teacher_courses': (context) => TeachCoursesPage(),
       '/teacher_courses/course': (context) => TeacherCourse(),
+      '/teacher_courses/course/homework': (context) => HomeworkStatistic(),
       '/student_courses/course': (context) => StudentCourse(),
       '/student_courses/course/homework': (context) => StudentTestPage(),
     },

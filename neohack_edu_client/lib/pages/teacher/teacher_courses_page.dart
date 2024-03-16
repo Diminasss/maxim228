@@ -14,47 +14,44 @@ class TeachCoursesPage extends StatelessWidget {
 
   Person? person;
 
-  Future<String> getCourseName(int course_id) async {
+  Future<List<Map<String, dynamic>>> getCoursesName() async {
     final response = await http.post(
-      Uri.parse('http://localhost:5000/person'),
+      Uri.parse('http://localhost:5000/course'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'course_id': ('course_id'),
+      body: jsonEncode(<String, dynamic>{
+        'login': person!.login,
+        'course_id': List.from(person!.currentCourses!)
+          ..addAll(person!.completedCourses!),
       }),
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['course_name'];
+      return List.from(jsonDecode(response.body)['courses']);
     } else {
       throw Exception('Failed to fetch data.');
     }
   }
 
-  Widget _tileBuilder(List<int> currCourses, List<int> compCourses) {
+  Widget _tileBuilder(
+      List<Map<dynamic, dynamic>> courses, int currSize, BuildContext context) {
     List<Widget> courseRows = [const SizedBox(width: 40)];
-    var combineCourses = new List.from(currCourses)..addAll(compCourses);
-    final List<String> courses = [];
-    combineCourses.forEach((element) async {
-      log('$element');
-      courses.add(await getCourseName(
-        int.parse(element),
-      ));
-    });
     for (int i = 0; i < courses.length; i += 3) {
       List<Widget> rowCourses = [];
       rowCourses.add(const SizedBox(width: 40));
       for (int j = i; j < i + 3 && j < courses.length; j++) {
-        rowCourses.add(j < currCourses.length
-            ? _buildCourseTile(courses[j])
-            : _buildCompleteCourseTile(courses[j]));
+        rowCourses.add(j < currSize
+            ? _buildCourseTile(
+                courses[j]['course_name'], courses[j]['course_id'], context)
+            : _buildCompleteCourseTile(
+                courses[j]['course_name'], courses[j]['course_id'], context));
         rowCourses.add(const SizedBox(width: 40));
       }
       courseRows.add(
         Row(
-          children: rowCourses,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: rowCourses,
         ),
       );
       courseRows.add(const SizedBox(height: 20));
@@ -62,58 +59,82 @@ class TeachCoursesPage extends StatelessWidget {
     return Column(children: courseRows);
   }
 
-  Widget _buildCourseTile(String course) {
+  Widget _buildCourseTile(String course, int id, BuildContext context) {
     return UnconstrainedBox(
-      child: Container(
-        height: 150,
-        width: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: <Color>[
-                Color.fromRGBO(255, 19, 127, 1),
-                Color.fromRGBO(237, 132, 82, 1),
-              ]),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          course,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
+      child: TextButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/teacher_courses/course', arguments: {
+            'person': person,
+            'id': id,
+          });
+        },
+        child: Container(
+          height: 150,
+          width: 250,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color.fromRGBO(255, 19, 127, 1),
+                  Color.fromRGBO(237, 132, 82, 1),
+                ]),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            course,
+            softWrap: true,
+            overflow: TextOverflow.fade,
+            maxLines: 3,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCompleteCourseTile(String course) {
+  Widget _buildCompleteCourseTile(String course, int id, BuildContext context) {
     return UnconstrainedBox(
-      child: Container(
-        height: 150,
-        width: 250,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          border: const GradientBoxBorder(
-            width: 3,
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: <Color>[
-                Color.fromRGBO(255, 19, 127, 1),
-                Color.fromRGBO(237, 132, 82, 1),
-              ],
+      child: TextButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/teacher_courses/course', arguments: {
+            'person': person,
+            'id': id,
+          });
+        },
+        child: Container(
+          height: 150,
+          width: 250,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            border: const GradientBoxBorder(
+              width: 3,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color.fromRGBO(255, 19, 127, 1),
+                  Color.fromRGBO(237, 132, 82, 1),
+                ],
+              ),
             ),
           ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          course,
-          style: TextStyle(
-            color: const Color.fromARGB(255, 0, 0, 0),
-            fontSize: 30,
+          alignment: Alignment.center,
+          child: Text(
+            course,
+            softWrap: true,
+            overflow: TextOverflow.fade,
+            maxLines: 3,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 0, 0, 0),
+              fontSize: 30,
+            ),
           ),
         ),
       ),
@@ -122,15 +143,15 @@ class TeachCoursesPage extends StatelessWidget {
 
   AlertDialog _notLogged(BuildContext context) {
     return AlertDialog(
-      content: Text('you are not logged in, please try again'),
-      title: Text('Error'),
+      content: const Text('you are not logged in, please try again'),
+      title: const Text('Error'),
       actions: [
         TextButton(
             onPressed: () {
               Navigator.pushNamedAndRemoveUntil(
                   context, '/main', (route) => false);
             },
-            child: Text('Go to main'))
+            child: const Text('Go to main'))
       ],
     );
   }
@@ -142,7 +163,6 @@ class TeachCoursesPage extends StatelessWidget {
     if (arguments.values.first != null) {
       person = arguments.values.first;
     }
-    log(person?.login ?? 'noLog');
     return Builder(builder: (context) {
       if (person == null) {
         return _notLogged(context);
@@ -199,11 +219,38 @@ class TeachCoursesPage extends StatelessWidget {
           toolbarHeight: 100,
         ),
         body: SafeArea(
-          minimum: EdgeInsets.only(left: 20, right: 20),
+          minimum: const EdgeInsets.only(left: 20, right: 20),
           child: ListView(
             children: [
-              SizedBox(height: 60),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 700,
+                  ),
+                  Container(
+                    height: 40,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: <Color>[
+                          Color.fromRGBO(40, 1, 84, 1),
+                          Color.fromRGBO(75, 0, 95, 81),
+                        ],
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text('Добавить курс'),
+                  ),
+                ],
+              ),
               FittedBox(
+                fit: BoxFit.scaleDown,
                 child: UnconstrainedBox(
                   child: Container(
                     height: 70,
@@ -219,7 +266,7 @@ class TeachCoursesPage extends StatelessWidget {
                           ]),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
+                    child: const Text(
                       'Курсы',
                       style: TextStyle(
                         color: Colors.white,
@@ -228,20 +275,31 @@ class TeachCoursesPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                fit: BoxFit.scaleDown,
               ),
-              SizedBox(height: 120),
+              const SizedBox(height: 120),
               FittedBox(
-                child: Builder(builder: (context) {
-                  if (person!.completedCourses!.isEmpty &&
-                      person!.currentCourses!.isEmpty) {
-                    return Text('No courses');
-                  }
-                  log('${person!.completedCourses!}');
-                  return _tileBuilder(
-                      person!.currentCourses!, person!.completedCourses!);
-                }),
                 fit: BoxFit.scaleDown,
+                child: Builder(
+                  builder: (context) {
+                    if (person!.completedCourses!.isEmpty &&
+                        person!.currentCourses!.isEmpty) {
+                      return const Text('No courses');
+                    }
+                    return FutureBuilder(
+                      future: getCoursesName(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text(snapshot.error.toString());
+                        }
+                        return _tileBuilder(snapshot.data!,
+                            person!.currentCourses!.length, context);
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),

@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:neohack_edu_client/classes/person.dart';
 
@@ -80,17 +78,17 @@ class StudentCourse extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        minimum: EdgeInsets.only(left: 30, right: 30),
+        minimum: const EdgeInsets.only(left: 30, right: 30),
         child: ListView(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             FutureBuilder(
               future: getCoursesName('l', courseId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
@@ -126,7 +124,7 @@ class StudentCourse extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     _myListView(courseInfo, person!),
@@ -143,15 +141,15 @@ class StudentCourse extends StatelessWidget {
 
 AlertDialog _notLogged(BuildContext context) {
   return AlertDialog(
-    content: Text('you are not logged in, please try again'),
-    title: Text('Error'),
+    content: const Text('you are not logged in, please try again'),
+    title: const Text('Error'),
     actions: [
       TextButton(
           onPressed: () {
             Navigator.pushNamedAndRemoveUntil(
                 context, '/main', (route) => false);
           },
-          child: Text('Go to main'))
+          child: const Text('Go to main'))
     ],
   );
 }
@@ -210,7 +208,7 @@ Widget _myListView(Map<dynamic, dynamic> courseInfo, Person person) {
             ListTile(
               title: Text(
                 item.message.replaceAll(RegExp(r"[']"), ''),
-                style: TextStyle(color: Colors.pink, fontSize: 30),
+                style: const TextStyle(color: Colors.pink, fontSize: 30),
               ),
             ),
             Divider(
@@ -224,7 +222,7 @@ Widget _myListView(Map<dynamic, dynamic> courseInfo, Person person) {
         );
       }
       if (item is MessageLectureItem) {
-        return ListTile(
+        return const ListTile(
           leading: Icon(Icons.import_contacts),
           title: Text(
             'Теоретическая часть',
@@ -238,7 +236,7 @@ Widget _myListView(Map<dynamic, dynamic> courseInfo, Person person) {
             Navigator.pushNamed(context, '/student_courses/course/homework',
                 arguments: {'person': person, 'id': item.testId});
           },
-          child: ListTile(
+          child: const ListTile(
             leading: Icon(Icons.laptop_mac),
             title: Text(
               'Домашнее задание',
