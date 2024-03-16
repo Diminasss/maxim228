@@ -121,7 +121,7 @@ def create_course() -> tuple[wrappers.Response, int]:
 test_initialisation("Python", "Сделайте пацанский тест", ["merge_sort([4, 2, 7, 1, 9, 5, 3, 8, 6])\n", "merge_sort([4, 2, 7, 1, 5, 3, 6])\n", "merge_sort([4, 2, 1, 5, 3, 6])\n"], ["[1, 2, 3, 4, 5, 6, 7, 8, 9]\n", "[1, 2, 3, 4, 5, 6, 7]\n", "[1, 3, 4, 5, 6]\n"])
 
 
-# @app.route('/checkhomework', methods=['POST'])
+@app.route('/checkhomework', methods=['POST'])
 def check_test() -> tuple[wrappers.Response, int]:
     test_input_info: dict = request.get_json()
 
