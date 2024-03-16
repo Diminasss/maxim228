@@ -173,7 +173,7 @@ class _StudentCourseState extends State<StudentCourse> {
                     SizedBox(
                       height: 50,
                     ),
-                    _myListView(courseInfo),
+                    _myListView(courseInfo, person!),
                   ],
                 );
               },
@@ -185,43 +185,74 @@ class _StudentCourseState extends State<StudentCourse> {
   }
 }
 
-Widget _myListView(Map<dynamic, dynamic> courseInfo) {
-  int lengthOfList = courseInfo['tests_inside_course'].length * 3;
-  final List<ListItem> items = List<ListItem>.generate(lengthOfList, (i) {
+Widget _myListView(Map<dynamic, dynamic> courseInfo, Person person) {
+  String str = (courseInfo['tests_inside_course']);
+  // Удаляем фигурные скобки и разделяем строку по запятым
+  List<String> parts = str.replaceAll("{", "").replaceAll("}", "").split(",");
+
+  // Преобразуем каждую часть в целое число и создаем список
+  List<int> numbers = parts.map((e) => int.parse(e.trim())).toList();
+
+  log(numbers.length.toString());
+
+  final List<ListItem> items = List<ListItem>.generate(numbers.length * 3, (i) {
     if (i % 3 == 0) {
       return MessageHeader(
           message: courseInfo['lectures_inside_course'][i ~/ 3].toString());
     } else if (i % 3 == 1) {
       return MessageLectureItem();
     } else {
-      return MessageTestItem(testId: courseInfo['tests_inside_course'][i ~/ 3]);
+      return MessageTestItem(testId: numbers[i ~/ 3]);
+      //return MessageTestItem(testId: courseInfo['tests_inside_course'][i ~/ 3]);
     }
   });
   return ListView.builder(
+    itemCount: numbers.length * 3,
+    scrollDirection: Axis.vertical,
+    shrinkWrap: true,
     itemBuilder: ((context, index) {
       final item = items[index];
 
       if (item is MessageHeader) {
-        return ListTile(
-          leading: Text(
-            item.message,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+                item.message.replaceAll(RegExp(r"[']"), ''),
+                style: TextStyle(color: Colors.pink, fontSize: 30),
+              ),
+            ),
+            Divider(
+              color: Colors.pink[300],
+              height: 0,
+              thickness: 3,
+              indent: 10,
+              endIndent: 10,
+            )
+          ],
         );
       }
       if (item is MessageLectureItem) {
         return ListTile(
+          leading: Icon(Icons.import_contacts),
           title: Text(
             'Теоретическая часть',
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: TextStyle(color: Colors.purple, fontSize: 20),
           ),
         );
       }
       if (item is MessageTestItem) {
-        return ListTile(
-          title: Text(
-            'Домашнее задание',
-            style: Theme.of(context).textTheme.headlineMedium,
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/student_courses/course/homework',
+                arguments: {'person': person, 'id': item.testId});
+          },
+          child: ListTile(
+            leading: Icon(Icons.laptop_mac),
+            title: Text(
+              'Домашнее задание',
+              style: TextStyle(color: Colors.purple, fontSize: 20),
+            ),
           ),
         );
       }
