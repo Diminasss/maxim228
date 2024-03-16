@@ -11,6 +11,7 @@ import 'package:neohack_edu_client/pages/teacher_courses_page.dart';
 void main() {
   setUrlStrategy(PathUrlStrategy());
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
     darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
     home: MainPage(),
