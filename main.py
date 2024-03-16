@@ -155,13 +155,21 @@ def get_test() -> tuple[wrappers.Response, int]:
     test_input_info: dict = request.get_json()
 
     test_id: int = test_input_info.get('test_id')
-    user_id: int = test_input_info.get('user_id')
+    user_id: str = test_input_info.get('user_id')
 
     test_name: str = get_from_postgresql_test_table("tests", test_id, "test_name")
     test_text: str = get_from_postgresql_test_table("tests", test_id, "test_text")
-    # users_with_marks: str = get_from_postgresql_test_table("tests", test_id, "test_name")
-    return jsonify({"test_id": test_id, "user_id": user_id, "test_name": test_name, "test_text": test_text, "users_with_marks": "2/3"}), 200
+    users_with_marks: str = get_from_postgresql_test_table("tests", test_id, "users_with_marks")
 
+    if users_with_marks is None:
+        pass
+    else:
+        if user_id in users_with_marks:
+            users_with_marks = users_with_marks[user_id]
+        else:
+            pass
+    print(users_with_marks)
+    return jsonify({"test_id": test_id, "user_id": user_id, "test_name": test_name, "test_text": test_text, "users_with_marks": users_with_marks}), 200
 
 
 if __name__ == '__main__':
