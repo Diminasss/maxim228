@@ -1,7 +1,7 @@
 import datetime
-from delete_folder import del_folder
-from clone_repo import clone
-from task_check import check_file
+from task_checking.delete_folder import del_folder
+from task_checking.clone_repo import clone
+from task_checking.task_check import check_file
 
 
 def check(file_path="https://github.com/lezhev/Neo.edu",
@@ -15,12 +15,6 @@ def check(file_path="https://github.com/lezhev/Neo.edu",
     bool_tuple = []
 
     for i in range(len(task_input)):
-
-        # with open(f"cloned_repos/{folder_name}/main.py", "a") as file:
-        #     file.write(f"\nprint({task_input[i]})")
-        #     file.flush()
-        #     file.close()
-
         with open(f"cloned_repos/{folder_name}/main.py", "r") as f:
 
             source_file = f.readlines()
@@ -41,6 +35,3 @@ def check(file_path="https://github.com/lezhev/Neo.edu",
 
     del_folder(folder_name)
     return bool_tuple
-
-
-print(check())

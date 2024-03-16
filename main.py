@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, wrappers
+from task_checking.run_command_scr import check
 from config import *
 from CourseBaseFunk import *
 from UserBaseFunk import *
@@ -114,10 +115,19 @@ def create_course() -> tuple[wrappers.Response, int]:
         edit_sqlite_table("users", x, "current_courses", available_courses)
     return jsonify({"response": "success"}), 200
 
+
 @app.route('/checkhomework', methods=['POST'])
 def check_test(): #-> tuple[wrappers.Response]:
     test_input_info: dict = request.get_json()
+
+    test_id: int = test_input_info.get('test_id')
+    user_id: int = test_input_info.get('user_id')
     repo_url: str = test_input_info.get('repo_url')
+
+    task_input: str =
+
+    check(file_path=repo_url, task_input=task_input, expected_output=expected_output)
+check_test()
 
 if __name__ == '__main__':
     app.run(debug=True)
