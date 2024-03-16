@@ -29,8 +29,8 @@ def database_connection() -> psycopg2.connect:
         course_name varchar(70),
         author varchar(100) NOT NULL,
         access_group varchar(100) ARRAY,
-        lectures_inside_course varchar(100) ARRAY,
-        tests_inside_course varchar(100))""")
+        lectures_inside_course integer ARRAY,
+        tests_inside_course integer ARRAY)""")
 
         print("Успешное создание/подключение к таблице курса")
 
@@ -38,8 +38,8 @@ def database_connection() -> psycopg2.connect:
                 test_id integer PRIMARY KEY,
                 test_name varchar(100),
                 test_text varchar(10000) NOT NULL,
-                input_data varchar(10000),
-                output_data varchar(10000))""")
+                input_data varchar(10000) ARRAY,
+                output_data varchar(10000) ARRAY)""")
 
         return cursor
     except psycopg2.OperationalError as e:
