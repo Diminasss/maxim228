@@ -233,8 +233,8 @@ Widget _myListView(Map<dynamic, dynamic> courseInfo, Person person) {
       if (item is MessageTestItem) {
         return GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/teacher_courses/course/homework',
-                arguments: {'person': person, 'id': item.testId});
+            // Navigator.pushNamed(context, '/teacher_courses/course/homework',
+            //     arguments: {'person': person, 'id': item.testId});
           },
           child: const ListTile(
             leading: Icon(Icons.laptop_mac),
