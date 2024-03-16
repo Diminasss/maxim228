@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:neohack_edu_client/colorscheme/color_schemes.g.dart';
-import 'package:neohack_edu_client/pages/student_course.dart';
-import 'package:neohack_edu_client/pages/student_courses_page.dart';
+import 'package:neohack_edu_client/pages/student/student_course.dart';
 import 'package:neohack_edu_client/pages/login_page.dart';
 import 'package:neohack_edu_client/pages/main_page.dart';
-import 'package:neohack_edu_client/pages/teacher_course.dart';
-import 'package:neohack_edu_client/pages/teacher_courses_page.dart';
+import 'package:neohack_edu_client/pages/student/student_courses_page.dart';
+import 'package:neohack_edu_client/pages/student/student_test_page.dart';
+import 'package:neohack_edu_client/pages/teacher/teacher_course.dart';
+import 'package:neohack_edu_client/pages/teacher/teacher_courses_page.dart';
 
 void main() {
   setUrlStrategy(PathUrlStrategy());
@@ -23,7 +24,7 @@ void main() {
       '/teacher_courses': (context) => TeachCoursesPage(),
       '/teacher_courses/course': (context) => TeacherCourse(),
       '/student_courses/course': (context) => StudentCourse(),
-      //TODO implement course page
+      '/student_courses/course/homework': (context) => StudentTestPage(),
     },
   ));
 }
