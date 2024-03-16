@@ -21,7 +21,7 @@ app = Flask(__name__)
 # user_initialisation("ivan85",  "qwerty789", "Мария" "Владимировна" "Новикова", "1983-06-10", "Уральский федеральный университет", True, [100, 101], [])
 # user_initialisation("elena93", "abcde567", "Денисович" "Семенов", "1991-04-22", "Новосибирский государственный университет", False, [100, 101], [])
 #
-# course_initialisation("Введение в программирование", "Иванов Иван", ["Группа 1", "Группа 2"], ["Лекция 1", "Лекция 2"], ["Тест 1", "Тест 2"])
+course_initialisation("Введение в программирование", "Иванов Иван", ["Группа 1", "Группа 2"], [1, 2], [1, 2])
 # course_initialisation("Основы баз данных", "Петрова Ольга", ["Группа 3", "Группа 4"], ["Лекция 3", "Лекция 4"], ["Тест 3", "Тест 4"])
 # course_initialisation("Математика для программистов", "Сидоров Петр", ["Группа 5", "Группа 6"], ["Лекция 5", "Лекция 6"], ["Тест 5", "Тест 6"])
 # course_initialisation("Алгоритмы и структуры данных", "Козлов Дмитрий", ["Группа 7", "Группа 8"], ["Лекция 7", "Лекция 8"], ["Тест 7", "Тест 8"])
@@ -118,8 +118,10 @@ def create_course() -> tuple[wrappers.Response, int]:
 
 
 test_initialisation("Python", "Сделайте пацанский тест", ["merge_sort([4, 2, 7, 1, 9, 5, 3, 8, 6])\n", "merge_sort([4, 2, 7, 1, 5, 3, 6])\n", "merge_sort([4, 2, 1, 5, 3, 6])\n"], ["[1, 2, 3, 4, 5, 6, 7, 8, 9]\n", "[1, 2, 3, 4, 5, 6, 7]\n", "[1, 3, 4, 5, 6]\n"])
+
+
 @app.route('/checkhomework', methods=['POST'])
-def check_test(): #-> tuple[wrappers.Response]:
+def check_test() -> tuple[wrappers.Response, int]:
     test_input_info: dict = request.get_json()
 
     test_id: int = test_input_info.get('test_id')
@@ -128,8 +130,13 @@ def check_test(): #-> tuple[wrappers.Response]:
 
     task_input: str = get_from_postgresql_test_table("tests", test_id, "input_data")
     expected_output: str = get_from_postgresql_test_table("tests", test_id, "output_data")
-    # check(file_path=repo_url, task_input=task_input, expected_output=expected_output)
-check_test()
+    result = check(file_path=repo_url, task_input=task_input, expected_output=expected_output)
+    result = str(result.count(True)) + "/" + str(len(result))
+    return jsonify({"response": result}), 200
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
