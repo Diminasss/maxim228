@@ -3,6 +3,7 @@ from task_checking.run_command_scr import check
 from config import *
 from CourseBaseFunk import *
 from UserBaseFunk import *
+from TestBaseFunk import *
 
 
 app = Flask(__name__)
@@ -116,6 +117,7 @@ def create_course() -> tuple[wrappers.Response, int]:
     return jsonify({"response": "success"}), 200
 
 
+test_initialisation("Python", "Сделайте пацанский тест", ["merge_sort([4, 2, 7, 1, 9, 5, 3, 8, 6])\n", "merge_sort([4, 2, 7, 1, 5, 3, 6])\n", "merge_sort([4, 2, 1, 5, 3, 6])\n"], ["[1, 2, 3, 4, 5, 6, 7, 8, 9]\n", "[1, 2, 3, 4, 5, 6, 7]\n", "[1, 3, 4, 5, 6]\n"])
 @app.route('/checkhomework', methods=['POST'])
 def check_test(): #-> tuple[wrappers.Response]:
     test_input_info: dict = request.get_json()
@@ -124,9 +126,9 @@ def check_test(): #-> tuple[wrappers.Response]:
     user_id: int = test_input_info.get('user_id')
     repo_url: str = test_input_info.get('repo_url')
 
-    task_input: str =
-
-    check(file_path=repo_url, task_input=task_input, expected_output=expected_output)
+    task_input: str = get_from_postgresql_test_table("tests", test_id, "input_data")
+    expected_output: str = get_from_postgresql_test_table("tests", test_id, "output_data")
+    # check(file_path=repo_url, task_input=task_input, expected_output=expected_output)
 check_test()
 
 if __name__ == '__main__':
