@@ -21,7 +21,7 @@ def test_initialisation(test_name: str, test_text: str, input_data: list, output
         print(e)
 
 
-def edit_test_sqlite_table(table_name: str, key: int, what_to_edit: str, value: str | list | int) -> None:
+def edit_test_sqlite_table(table_name: str, key: int, what_to_edit: str, value) -> None:
     """
     Таблицы на выбор:\n
     users\n\n
@@ -43,7 +43,7 @@ def edit_test_sqlite_table(table_name: str, key: int, what_to_edit: str, value: 
     :return:
     """
     try:
-        cursor.execute(f"""UPDATE {table_name} SET {what_to_edit} = %s WHERE login = %s""", (value, key))
+        cursor.execute(f"""UPDATE {table_name} SET {what_to_edit} = %s WHERE test_id = %s""", (value, key))
     except IntegrityError as e:
         print("Ошибка при редактировании:", e)
 

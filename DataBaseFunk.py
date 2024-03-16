@@ -39,7 +39,8 @@ def database_connection() -> psycopg2.connect:
                 test_name varchar(100),
                 test_text varchar(10000) NOT NULL,
                 input_data varchar(10000) ARRAY,
-                output_data varchar(10000) ARRAY)""")
+                output_data varchar(10000) ARRAY,
+                users_with_marks JSONB)""")
 
         return cursor
     except psycopg2.OperationalError as e:
