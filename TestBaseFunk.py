@@ -68,7 +68,7 @@ def get_from_postgresql_test_table(table_name: str, key: int, what_to_get: str) 
     :param what_to_get:
     :return str | list | int | bool"""
     try:
-        cursor.execute(f"""SELECT {what_to_get} FROM {table_name} WHERE login = %s""", (key,))
+        cursor.execute(f"""SELECT {what_to_get} FROM {table_name} WHERE test_id = %s""", (key,))
         value = cursor.fetchone()[0]
         return value if value is not None else None
     except IntegrityError as e:
