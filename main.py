@@ -155,7 +155,7 @@ def get_test() -> tuple[wrappers.Response, int]:
     test_name: str = get_from_postgresql_test_table("tests", test_id, "test_name")
     test_text: str = get_from_postgresql_test_table("tests", test_id, "test_text")
     # users_with_marks: str = get_from_postgresql_test_table("tests", test_id, "test_name")
-    return jsonify({"test_id": test_id, "user_id": user_id, "test_name": test_name, "test_text": test_text}), 200
+    return jsonify({"test_id": test_id, "user_id": user_id, "test_name": test_name, "test_text": test_text, "users_with_marks": "2/3"}), 200
 
 get_test(1, 2)
 
