@@ -227,25 +227,36 @@ class TeachCoursesPage extends StatelessWidget {
               ),
               Row(
                 children: [
-                  SizedBox(
-                    width: 700,
+                  Expanded(
+                    flex: 4,
+                    child: SizedBox(
+                      width: 700,
+                    ),
                   ),
-                  Container(
-                    height: 40,
-                    width: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: <Color>[
-                          Color.fromRGBO(40, 1, 84, 1),
-                          Color.fromRGBO(75, 0, 95, 81),
-                        ],
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/teacher/add_course',
+                            arguments: {'person': person});
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              Color.fromRGBO(40, 1, 84, 1),
+                              Color.fromRGBO(75, 0, 95, 81),
+                            ],
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text('Добавить курс'),
                       ),
                     ),
-                    alignment: Alignment.center,
-                    child: Text('Добавить курс'),
                   ),
                 ],
               ),

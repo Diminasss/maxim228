@@ -88,6 +88,53 @@ class HomeworkStatistic extends StatelessWidget {
         toolbarHeight: 100,
       ),
       backgroundColor: Colors.white,
+      body: Center(
+        child: Table(
+          border: TableBorder.all(),
+          children: [
+            TableRow(
+              children: [
+                TableCell(
+                  child: Center(child: Text('Row 1, Cell 1')),
+                ),
+                TableCell(
+                  child: Center(child: Text('Row 1, Cell 2')),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                TableCell(
+                  child: Center(child: Text('Row 2, Cell 1')),
+                ),
+                TableCell(
+                  child: Center(child: Text('Row 2, Cell 2')),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                TableCell(
+                  child: Center(child: Text('Row 3, Cell 1')),
+                ),
+                TableCell(
+                  child: Center(child: Text('Row 3, Cell 2')),
+                ),
+              ],
+            ),
+            TableRow(
+              children: [
+                TableCell(
+                  child: Center(child: Text('Row 4, Cell 1')),
+                ),
+                TableCell(
+                  child: Center(child: Text('Row 4, Cell 2')),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
