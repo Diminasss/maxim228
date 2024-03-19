@@ -29,7 +29,7 @@ def database_connection() -> psycopg2.connect:
         course_name varchar(70),
         author varchar(100) NOT NULL,
         access_group varchar(100) ARRAY,
-        lectures_inside_course integer ARRAY,
+        lectures_inside_course varchar(100) ARRAY,
         tests_inside_course integer ARRAY)""")
 
         print("Успешное создание/подключение к таблице курса")

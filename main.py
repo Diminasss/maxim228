@@ -90,7 +90,8 @@ def course() -> tuple[wrappers.Response, int]:
     new_mas = []
     for course_id in course_ids:
         course_info: dict = get_all_information_from_course(course_id)
-        new_mas.append(course_info)
+        if not(course_info is None): 
+            new_mas.append(course_info)
     course_info: dict = {'login': login, 'courses': new_mas}
     if len(new_mas) > 0:
         print(course_info)
